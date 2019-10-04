@@ -18,3 +18,11 @@ class ProductPage(BasePage):
         added_name = self.browser.find_element(*ProductPageLocators.PRODUCT_ALERT_NAME_OF_ADDED_GOOD).text
         assert str(name) == str(added_name), f"Name '{name}' should be equal to '{added_name}'"
         assert number == price, f"Price '{price}' should be equal to '{number}'"
+
+    def should_not_be_success_message(self):
+        assert self.is_not_element_present(*ProductPageLocators.PRODUCT_ALERT_NAME_OF_ADDED_GOOD), \
+            "Success message is presented, but should not be"
+
+    def success_message_should_dissapear(self):
+        assert self.is_disappeared(*ProductPageLocators.PRODUCT_ALERT_NAME_OF_ADDED_GOOD), \
+            "Success message is presented, but should have disapeared"
