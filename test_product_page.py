@@ -1,8 +1,56 @@
+import time
+
 import pytest
 
 from StepicSeleniumProject.pages.basket_page import BasketPage
 from StepicSeleniumProject.pages.login_page import LoginPage
 from StepicSeleniumProject.pages.product_page import ProductPage
+
+
+@pytest.mark.userbasketfixtures
+class TestUserAddToBasketFromProductPage:
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        self.browser = browser
+        link = "http://selenium1py.pythonanywhere.com/accounts/login/"
+        loginpage = LoginPage(self.browser, link)
+        loginpage.open()
+        email = str(time.time()) + "@fakemail.org"
+        password = "gfdsa12345"
+        loginpage.register_new_user(email, password)
+        loginpage.should_be_authorized_user()
+
+    @pytest.mark.parametrize('link',
+                             ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
+                              "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer1",
+                              "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer2",
+                              "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer3",
+                              "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer4",
+                              "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer5",
+                              "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer6",
+                              pytest.param("http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207"
+                                           "/?promo=offer7", marks=pytest.mark.xfail),
+                              "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer8",
+                              "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer9"])
+    def test_user_can_add_product_to_basket(self, link):
+        # Get to page
+        page = ProductPage(self.browser, link)
+        page.open()
+        page.should_be_authorized_user()
+        # CLick add to cart
+        page.product_add_to_cart()
+        page.solve_quiz_and_get_code()
+        # check that was added
+        page.product_should_be_added_to_cart()
+
+    def test_user_cant_see_success_message(self):
+        # 1 open page
+        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+        page = ProductPage(self.browser, link)
+        page.open()
+        page.should_be_authorized_user()
+        # 2 no message by using 'is_not_element_present'
+        page.should_not_be_success_message()
 
 
 @pytest.mark.parametrize('link', ["http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer0",
@@ -27,6 +75,15 @@ def test_guest_can_add_product_to_basket(browser, link):
     page.product_should_be_added_to_cart()
 
 
+def test_guest_cant_see_success_message(browser):
+    # 1 open page
+    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+    page = ProductPage(browser, link)
+    page.open()
+    # 2 no message by using 'is_not_element_present'
+    page.should_not_be_success_message()
+
+
 @pytest.mark.xfail
 def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
     # 1 open page
@@ -36,15 +93,6 @@ def test_guest_cant_see_success_message_after_adding_product_to_basket(browser):
     # 2 add good to cart
     page.product_add_to_cart()
     # 3 no message by using 'is_not_element_present'
-    page.should_not_be_success_message()
-
-
-def test_guest_cant_see_success_message(browser):
-    # 1 open page
-    link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
-    page = ProductPage(browser, link)
-    page.open()
-    # 2 no message by using 'is_not_element_present'
     page.should_not_be_success_message()
 
 

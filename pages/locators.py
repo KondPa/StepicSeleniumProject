@@ -6,6 +6,7 @@ class MainPageLocators:
 
 
 class BasePageLocators:
+    USER_ICON = (By.CSS_SELECTOR, ".icon-user")
     LOGIN_LINK = (By.CSS_SELECTOR, "#login_link")
     LOGIN_LINK_INVALID = (By.CSS_SELECTOR, "#login_link_inc")
     BASKET_HEADER_BUTTON = (By.CSS_SELECTOR, ".basket-mini a.btn")
@@ -13,6 +14,7 @@ class BasePageLocators:
 
 class LoginPageLocators:
     LOGIN_FORM = (By.CSS_SELECTOR, "#login_form")
+    # login success message "#messages div.alertinner"
     LOGIN_EMAIL_FIELD = (By.CSS_SELECTOR, "#id_login-username")
     LOGIN_PASSWORD_FIELD = (By.CSS_SELECTOR, "#id_login-password")
     LOGIN_FORGOT_PASSWORD_LINK = (By.CSS_SELECTOR, "#login_form a")
